@@ -208,7 +208,7 @@ function CaptionPlugin({
 	);
 	if (!slot || (!summary && !actions)) return null;
 	return createPortal(
-		<div className="caption-row flex items-center justify-between gap-6 bg-white py-3">
+		<div className="caption-row flex flex-col items-start gap-3 bg-white py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
 			<p className="text-sm text-zinc-600">{summary}</p>
 			{actions}
 		</div>,
@@ -284,7 +284,10 @@ function DataRows({ rows }: { rows: [string, string][] }) {
 	return (
 		<dl className="divide-y divide-zinc-200 border-y border-zinc-200">
 			{rows.map(([k, v]) => (
-				<div key={k} className="grid grid-cols-[12rem_1fr] gap-6 py-3">
+				<div
+					key={k}
+					className="grid gap-1 py-3 sm:grid-cols-[12rem_1fr] sm:gap-6"
+				>
 					<dt className="text-sm text-zinc-500">{k}</dt>
 					<dd>{v}</dd>
 				</div>
@@ -498,12 +501,12 @@ function App() {
 				</div>
 			) : (
 				<>
-					<div className="flex items-baseline justify-between gap-8 px-8 py-5">
+					<div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 px-8 py-5">
 						<h1 className="text-3xl font-semibold">
 							{object.title}{" "}
 							<span className="text-sm font-normal">{object.date}</span>
 						</h1>
-						<p className="shrink-0 font-medium">{object.artist}</p>
+						<p className="font-medium">{object.artist}</p>
 					</div>
 					{viewer}
 				</>
