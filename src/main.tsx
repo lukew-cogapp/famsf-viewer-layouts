@@ -21,6 +21,8 @@ type ArtObject = {
 	citation: string;
 	/** Rights allow download. Otherwise the page offers a request instead. */
 	download: boolean;
+	/** rightsstatements.org icon family and the statement it stands for. */
+	rights: { icon: "InC" | "NoC" | "Other"; label: string };
 	relatedLabel: string;
 	related: [title: string, date: string, imageId: string][];
 };
@@ -45,6 +47,7 @@ const objects: Record<string, ArtObject> = {
 			"© 2026 Richard Diebenkorn Foundation / Artists Rights Society (ARS), New York",
 		citation: "Gift of George Hellyer in honor of Ira Yeager, 1999.137.27",
 		download: true,
+		rights: { icon: "InC", label: "In Copyright" },
 		relatedLabel: "More by this artist",
 		related: [
 			["Seawall", "1957", "A314807_V3_crop"],
@@ -73,6 +76,7 @@ const objects: Record<string, ArtObject> = {
 		copyright: "Copyright status is unknown",
 		citation: "Gift of Mrs. Marie Clary, 1980.62.20",
 		download: false,
+		rights: { icon: "Other", label: "Copyright Undetermined" },
 		relatedLabel: "More from this collection",
 		related: [
 			["One baby shoe", "early 20th century", "0820200210230233"],
@@ -160,6 +164,23 @@ const param = <T extends string>(name: string, keys: T[]) => {
 	return keys.find((k) => k === value) ?? keys[0];
 };
 
+function RightsIcon({
+	object,
+	className,
+}: {
+	object: ArtObject;
+	className: string;
+}) {
+	return (
+		<img
+			src={`${import.meta.env.BASE_URL}rights/${object.rights.icon}.svg`}
+			alt={object.rights.label}
+			title={object.rights.label}
+			className={className}
+		/>
+	);
+}
+
 function ImageActions({
 	object,
 	compact = false,
@@ -168,22 +189,13 @@ function ImageActions({
 	compact?: boolean;
 }) {
 	const button = `shrink-0 rounded-full border border-black ${compact ? "px-5 py-1.5 text-sm" : "px-8 py-3"}`;
-	return object.download ? (
+	return (
 		<div className="flex shrink-0 items-center gap-4">
-			<span
-				className={`leading-none font-black ${compact ? "text-3xl" : "text-5xl"}`}
-				title="Licence"
-			>
-				C
-			</span>
+			<RightsIcon object={object} className={compact ? "size-8" : "size-12"} />
 			<button type="button" className={button}>
-				Download
+				{object.download ? "Download" : "Request information"}
 			</button>
 		</div>
-	) : (
-		<button type="button" className={button}>
-			Request information
-		</button>
 	);
 }
 
@@ -264,8 +276,9 @@ function Clover({
 											) : layout.actions === "rights" ? (
 												<a
 													href={`#${RIGHTS_ID}`}
-													className="shrink-0 text-sm underline underline-offset-4"
+													className="flex shrink-0 items-center gap-2 text-sm underline underline-offset-4"
 												>
+													<RightsIcon object={object} className="size-6" />
 													Use this image
 												</a>
 											) : undefined,
