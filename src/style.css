@@ -19,3 +19,7 @@
 button.clover-viewer-media-item figure figcaption {
 	display: none;
 }
+
+.clover-viewer-media-wrapper {
+	--clover-thumbnail-width: 100px;
+}
