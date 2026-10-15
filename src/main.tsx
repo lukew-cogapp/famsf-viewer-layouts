@@ -58,6 +58,43 @@ const objects: Record<string, ArtObject> = {
 			["Trial proof for Blue Surround", "1982", "5050161216210028"],
 		],
 	},
+	album: {
+		label: "Paris album: 36 images",
+		id: "55456",
+		title: "Views of Paris",
+		date: "ca. 1887",
+		artist: "Unidentified, French, active 19th century",
+		medium: "album with seventeen mounted albumen photographs",
+		details: [
+			["Dimensions", "Object: 163 x 248 x 53 mm (6 7/16 x 9 3/4 x 2 1/16 in.)"],
+			["Collection area", "Achenbach Foundation for Graphic Arts"],
+			["Object type", "Artist's Book"],
+			["Credit line", "Gift of Serge Millan"],
+			["Accession number", "1989.3.13"],
+		],
+		department: "Achenbach Foundation for Graphic Arts",
+		copyright: "Public domain",
+		citation: "Gift of Serge Millan, 1989.3.13",
+		download: true,
+		rights: { icon: "NoC", label: "Public domain" },
+		relatedLabel: "More from this collection",
+		related: [
+			[
+				"Sainte-Chapelle, plate 28 from the album Vues",
+				"1858",
+				"4359202410950056",
+			],
+			[
+				"Tuileries Palace, plate 6 of the album Vues",
+				"1858",
+				"109255_A050144_V1_hero",
+			],
+			["Le Pont St. Michel", "1909", "3306201408290028"],
+			["Ossuaire des catacombes", "1862", "A046630_V1"],
+			["Umbrella Handle (Hands)", "1932", "A378555_V1"],
+			["Photogram", "1946", "2105200910440026"],
+		],
+	},
 	shoe: {
 		label: "Baby shoe: 1 image, no download",
 		id: "74092",
@@ -468,7 +505,7 @@ function Toggle({
 	options: Record<string, string>;
 }) {
 	return (
-		<div className="flex gap-1">
+		<div className="flex flex-wrap gap-1">
 			{Object.keys(options).map((k) => {
 				const url = new URL(location.href);
 				url.searchParams.set(name, k);
