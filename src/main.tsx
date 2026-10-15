@@ -109,8 +109,11 @@ type Layout = {
 	/** Viewer height, image plus film strip. Unset keeps the fixed canvasHeight. */
 	height?: string;
 	split?: boolean;
-	/** Licence and download sit in the caption row, above the thumbnail strip. */
-	actionsInViewer?: boolean;
+	/**
+	 * Where licence and download go. Unset: under the viewer. "caption": in the
+	 * caption row. "rights": in Rights and citation, linked from the caption row.
+	 */
+	actions?: "caption" | "rights";
 	pagerInline?: boolean;
 };
 
@@ -124,13 +127,20 @@ const layouts: Record<string, Layout> = {
 		name: "Current, compact",
 		note: "Current, with licence and download in the caption row so the thumbnail strip comes last.",
 		options: siteOptions,
-		actionsInViewer: true,
+		actions: "caption",
 	},
 	tall: {
 		name: "Compact, tall",
 		note: "Compact, with a taller canvas on big screens and the pager beside the thumbnails.",
 		options: { ...siteOptions, canvasHeight: "min(70svh, 50rem)" },
-		actionsInViewer: true,
+		actions: "caption",
+		pagerInline: true,
+	},
+	link: {
+		name: "Image link",
+		note: "Compact, tall, with a link from the caption row to download or request in Rights and citation.",
+		options: { ...siteOptions, canvasHeight: "min(70svh, 50rem)" },
+		actions: "rights",
 		pagerInline: true,
 	},
 	split: {
@@ -141,6 +151,9 @@ const layouts: Record<string, Layout> = {
 		split: true,
 	},
 };
+
+const slug = (text: string) => text.toLowerCase().replaceAll(" ", "-");
+const RIGHTS_ID = slug("Rights and citation");
 
 const param = <T extends string>(name: string, keys: T[]) => {
 	const value = new URLSearchParams(location.search).get(name);
@@ -244,16 +257,26 @@ function Clover({
 							imageViewer: {
 								controls: {
 									component: CaptionPlugin,
-									componentProps: layout.actionsInViewer
-										? { actions: <ImageActions object={object} compact /> }
-										: {},
+									componentProps: {
+										actions:
+											layout.actions === "caption" ? (
+												<ImageActions object={object} compact />
+											) : layout.actions === "rights" ? (
+												<a
+													href={`#${RIGHTS_ID}`}
+													className="shrink-0 text-sm underline underline-offset-4"
+												>
+													Use this image
+												</a>
+											) : undefined,
+									},
 								},
 							},
 						},
 					]}
 				/>
 			</div>
-			{!layout.actionsInViewer && (
+			{!layout.actions && (
 				<div className={`mt-4 ${layout.split ? "" : "px-8"}`}>
 					<ImageActions object={object} />
 				</div>
@@ -300,7 +323,10 @@ function Disclosure({
 	children: ReactNode;
 }) {
 	return (
-		<details className="group border-t border-zinc-300">
+		<details
+			id={slug(summary)}
+			className="group scroll-mt-20 border-t border-zinc-300"
+		>
 			<summary className="flex cursor-pointer list-none items-center justify-between py-5 text-2xl font-semibold">
 				{summary}
 				<span className="text-3xl font-light transition-transform group-open:rotate-45">
@@ -316,30 +342,36 @@ function Disclosure({
 function PageBody({
 	object,
 	withFrontMatter,
+	withActions,
 }: {
 	object: ArtObject;
 	withFrontMatter: boolean;
+	withActions: boolean;
 }) {
 	return (
 		<>
-			<nav className="sticky top-10 z-10 mt-12 flex gap-6 overflow-x-auto border-y border-zinc-200 bg-white px-8 py-3 text-sm">
+			<nav className="sticky top-0 z-10 mt-12 flex gap-6 overflow-x-auto border-y border-zinc-200 bg-white px-8 py-3 text-sm">
 				{[
 					"Object details",
 					"Additional information",
 					"Provenance",
 					"Rights and citation",
 				].map((s) => (
-					<a key={s} href="#top" className="whitespace-nowrap hover:underline">
+					<a
+						key={s}
+						href={`#${slug(s)}`}
+						className="whitespace-nowrap hover:underline"
+					>
 						{s}
 					</a>
 				))}
 			</nav>
 			<div className="grid gap-10 px-8 py-12 lg:grid-cols-12">
-				<div className="self-start lg:sticky lg:top-28 lg:col-span-4">
+				<div className="self-start lg:sticky lg:top-20 lg:col-span-4">
 					{withFrontMatter && <FrontMatter object={object} />}
 				</div>
 				<div className="flex flex-col gap-16 lg:col-span-8">
-					<section>
+					<section id={slug("Object details")} className="scroll-mt-20">
 						<h2 className="mb-8 text-3xl font-semibold">Object details</h2>
 						<DataRows
 							rows={[
@@ -358,13 +390,18 @@ function PageBody({
 							<p className="text-zinc-500">Placeholder: provenance entries.</p>
 						</Disclosure>
 					</div>
-					<section>
+					<section id={RIGHTS_ID} className="scroll-mt-20">
 						<h2 className="mb-6 text-3xl font-semibold">Rights and citation</h2>
 						<p className="text-sm">{object.copyright}</p>
 						<p className="mt-4 text-sm text-zinc-600">
 							{object.artist}, <i>{object.title}</i>, {object.date}. Fine Arts
 							Museums of San Francisco, {object.citation}.
 						</p>
+						{withActions && (
+							<div className="mt-6">
+								<ImageActions object={object} />
+							</div>
+						)}
 					</section>
 				</div>
 			</div>
@@ -456,7 +493,7 @@ function App() {
 
 	return (
 		<>
-			<div className="sticky top-0 z-20 flex flex-wrap items-center gap-x-6 gap-y-2 bg-zinc-900 px-4 py-2 text-sm text-white">
+			<div className="flex flex-wrap items-center gap-x-6 gap-y-2 bg-zinc-900 px-4 py-2 text-sm text-white">
 				<Toggle
 					name="layout"
 					value={layoutKey}
@@ -507,7 +544,11 @@ function App() {
 					{viewer}
 				</>
 			)}
-			<PageBody object={object} withFrontMatter={!layout.split} />
+			<PageBody
+				object={object}
+				withFrontMatter={!layout.split}
+				withActions={layout.actions === "rights"}
+			/>
 		</>
 	);
 }
