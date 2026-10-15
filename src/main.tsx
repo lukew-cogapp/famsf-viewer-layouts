@@ -240,13 +240,28 @@ function ImageActions({
  * Shows the active canvas's summary directly under the image, above Clover's
  * thumbnail strip. Clover's only plugin slot is inside its toolbar, so this
  * renders into its own element placed after `.clover-viewer-painting`.
+ *
+ * Also names the zoomable viewport: Clover 3.17 gives it `role="img"` with no
+ * accessible name (fixed upstream in 4.0).
  */
 function CaptionPlugin({
 	useViewerState,
 	actions,
-}: Plugin & { actions?: ReactNode }) {
+	title,
+}: Plugin & { actions?: ReactNode; title: string }) {
 	const { activeCanvas, openSeadragonViewer, vault } = useViewerState();
 	const [slot, setSlot] = useState<HTMLElement>();
+	const canvas = vault.get({ id: activeCanvas, type: "Canvas" }) as {
+		label?: LangMap;
+		summary?: LangMap;
+	};
+
+	useEffect(() => {
+		openSeadragonViewer?.element?.setAttribute(
+			"aria-label",
+			[title, toText(canvas?.label)].filter(Boolean).join(", "),
+		);
+	}, [openSeadragonViewer, title, canvas]);
 
 	useEffect(() => {
 		const painting = openSeadragonViewer?.element?.closest(
@@ -259,10 +274,7 @@ function CaptionPlugin({
 		return () => el.remove();
 	}, [openSeadragonViewer]);
 
-	const summary = toText(
-		(vault.get({ id: activeCanvas, type: "Canvas" }) as { summary?: LangMap })
-			?.summary,
-	);
+	const summary = toText(canvas?.summary);
 	if (!slot || (!summary && !actions)) return null;
 	return createPortal(
 		<div className="caption-row flex flex-col items-start gap-3 bg-white py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
@@ -307,6 +319,7 @@ function Clover({
 								controls: {
 									component: CaptionPlugin,
 									componentProps: {
+										title: object.title,
 										actions:
 											layout.actions === "caption" ? (
 												<ImageActions object={object} compact />
@@ -335,10 +348,17 @@ function Clover({
 	);
 }
 
-function FrontMatter({ object }: { object: ArtObject }) {
+function FrontMatter({
+	object,
+	isHeading = false,
+}: {
+	object: ArtObject;
+	isHeading?: boolean;
+}) {
+	const Title = isHeading ? "h1" : "p";
 	return (
 		<div className="max-w-sm space-y-2">
-			<p className="text-xl font-semibold">{object.title}</p>
+			<Title className="text-xl font-semibold">{object.title}</Title>
 			<p>{object.artist}</p>
 			<p>{object.date}</p>
 			<p className="text-sm text-zinc-600">{object.medium}</p>
@@ -400,7 +420,10 @@ function PageBody({
 }) {
 	return (
 		<>
-			<nav className="sticky top-0 z-10 mt-12 flex gap-6 overflow-x-auto border-y border-zinc-200 bg-white px-8 py-3 text-sm">
+			<nav
+				aria-label="Sections"
+				className="sticky top-0 z-10 mt-12 flex gap-6 overflow-x-auto border-y border-zinc-200 bg-white px-8 py-3 text-sm"
+			>
 				{[
 					"Object details",
 					"Additional information",
@@ -543,7 +566,10 @@ function App() {
 
 	return (
 		<>
-			<div className="flex flex-wrap items-center gap-x-6 gap-y-2 bg-zinc-900 px-4 py-2 text-sm text-white">
+			<nav
+				aria-label="Mockup layout and object"
+				className="flex flex-wrap items-center gap-x-6 gap-y-2 bg-zinc-900 px-4 py-2 text-sm text-white"
+			>
 				<Toggle
 					name="layout"
 					value={layoutKey}
@@ -559,7 +585,7 @@ function App() {
 					)}
 				/>
 				<span className="text-zinc-400">{layout.note}</span>
-			</div>
+			</nav>
 			<header className="flex items-center justify-between bg-zinc-100 px-8 py-4">
 				<div className="flex items-center gap-8 text-lg leading-tight">
 					<span className="font-bold">
@@ -572,33 +598,35 @@ function App() {
 						of san francisco
 					</span>
 				</div>
-				<nav className="flex gap-6 font-semibold">
+				<nav aria-label="Site" className="flex gap-6 font-semibold">
 					<a href="#top">Home</a>
 					<a href="#top">Search</a>
 				</nav>
 			</header>
-			{layout.split ? (
-				<div className="grid gap-8 px-8 pt-6 lg:grid-cols-[2fr_1fr]">
-					<div className="min-w-0">{viewer}</div>
-					<FrontMatter object={object} />
-				</div>
-			) : (
-				<>
-					<div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 px-8 py-5">
-						<h1 className="text-3xl font-semibold">
-							{object.title}{" "}
-							<span className="text-sm font-normal">{object.date}</span>
-						</h1>
-						<p className="font-medium">{object.artist}</p>
+			<main>
+				{layout.split ? (
+					<div className="grid gap-8 px-8 pt-6 lg:grid-cols-[2fr_1fr]">
+						<div className="min-w-0">{viewer}</div>
+						<FrontMatter object={object} isHeading />
 					</div>
-					{viewer}
-				</>
-			)}
-			<PageBody
-				object={object}
-				withFrontMatter={!layout.split}
-				withActions={layout.actions === "rights"}
-			/>
+				) : (
+					<>
+						<div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 px-8 py-5">
+							<h1 className="text-3xl font-semibold">
+								{object.title}{" "}
+								<span className="text-sm font-normal">{object.date}</span>
+							</h1>
+							<p className="font-medium">{object.artist}</p>
+						</div>
+						{viewer}
+					</>
+				)}
+				<PageBody
+					object={object}
+					withFrontMatter={!layout.split}
+					withActions={layout.actions === "rights"}
+				/>
+			</main>
 		</>
 	);
 }

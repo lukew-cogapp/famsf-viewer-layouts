@@ -15,9 +15,15 @@
 }
 
 /* Canvas labels are generated ("Image 1") and say nothing the strip doesn't.
-   Clover has no option to omit them; the thumbnail alt text keeps the name. */
+   Clover has no option to omit them. Hidden visually only: the label is the
+   thumbnail button's name until its lazy-loaded image (and alt) arrives. */
 button.clover-viewer-media-item figure figcaption {
-	display: none;
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
 }
 
 .clover-viewer-media-wrapper {
