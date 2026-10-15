@@ -111,6 +111,7 @@ type Layout = {
 	split?: boolean;
 	/** Licence and download sit in the caption row, above the thumbnail strip. */
 	actionsInViewer?: boolean;
+	pagerInline?: boolean;
 };
 
 const layouts: Record<string, Layout> = {
@@ -125,18 +126,12 @@ const layouts: Record<string, Layout> = {
 		options: siteOptions,
 		actionsInViewer: true,
 	},
-	panel: {
-		name: "Info panel",
-		note: "Clover's own side panel, open, with the object metadata in its About tab.",
-		options: {
-			...siteOptions,
-			informationPanel: {
-				open: true,
-				renderToggle: true,
-				renderAbout: true,
-			},
-		},
-		height: "calc(100svh - 16rem)",
+	tall: {
+		name: "Compact, tall",
+		note: "Compact, with a taller canvas on big screens and the pager beside the thumbnails.",
+		options: { ...siteOptions, canvasHeight: "min(70svh, 50rem)" },
+		actionsInViewer: true,
+		pagerInline: true,
 	},
 	split: {
 		name: "Split",
@@ -227,11 +222,12 @@ function Clover({
 }) {
 	return (
 		<figure
-			className={
+			className={[
 				layout.split
 					? ""
-					: "[&_.caption-row]:px-8 [&_.clover-viewer-media-wrapper]:px-8"
-			}
+					: "[&_.caption-row]:px-8 [&_.clover-viewer-media-wrapper]:px-8",
+				layout.pagerInline ? "pager-inline" : "",
+			].join(" ")}
 		>
 			{/* Clover's "auto" height needs a positioned parent with a set height. */}
 			<div className="relative z-0" style={{ height: layout.height }}>

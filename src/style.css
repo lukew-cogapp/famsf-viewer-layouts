@@ -23,3 +23,44 @@ button.clover-viewer-media-item figure figcaption {
 .clover-viewer-media-wrapper {
 	--clover-thumbnail-width: 100px;
 }
+
+/* Clover stacks the pager above the strip, pushed to the far right. Put it on
+   the same row, straight after the thumbnails it controls. */
+.pager-inline .clover-slider {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+}
+
+.pager-inline .clover-slider-header {
+	order: 1;
+	flex: none;
+	padding: 0;
+}
+
+.pager-inline .clover-slider-header-content {
+	display: none;
+}
+
+.pager-inline .clover-viewer-media-sequence {
+	flex: 0 1 auto;
+	width: fit-content;
+	min-width: 0;
+	padding-bottom: 0.75rem;
+}
+
+@media (width < 40rem) {
+	.pager-inline .clover-slider {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.75rem;
+	}
+
+	.pager-inline .clover-slider-header {
+		order: 0;
+	}
+
+	.pager-inline .clover-viewer-media-sequence {
+		width: 100%;
+	}
+}
