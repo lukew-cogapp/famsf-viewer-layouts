@@ -14,6 +14,13 @@
 	--clover-color-accent: #52525b;
 }
 
+/* Clover draws the focus ring in the primary colour, which is white above and
+   would vanish against the light stage. */
+.clover-iiif-image-openseadragon-controls button:focus-visible {
+	outline: 3px solid #000;
+	outline-offset: 2px;
+}
+
 /* Canvas labels are generated ("Image 1") and say nothing the strip doesn't.
    Clover has no option to omit them. Hidden visually only: the label is the
    thumbnail button's name until its lazy-loaded image (and alt) arrives. */
