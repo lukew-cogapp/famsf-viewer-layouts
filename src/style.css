@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+	--font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+	--color-stage: #ececec;
+}
+
+/* Square black controls, as on the current site. Scoped to the toolbar so the
+   colour swap doesn't reach Clover's thumbnails or information panel. */
+.clover-iiif-image-openseadragon-controls {
+	--clover-radius-pill: 0;
+	--clover-color-primary: #fff;
+	--clover-color-secondary: #000;
+	--clover-color-accent: #52525b;
+}
