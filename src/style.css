@@ -22,6 +22,7 @@ button.clover-viewer-media-item figure figcaption {
 
 .clover-viewer-media-wrapper {
 	--clover-thumbnail-width: 100px;
+	--clover-color-accent: #000;
 }
 
 /* Clover stacks the pager above the strip, pushed to the far right. Put it on
