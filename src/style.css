@@ -13,3 +13,9 @@
 	--clover-color-secondary: #000;
 	--clover-color-accent: #52525b;
 }
+
+/* Canvas labels are generated ("Image 1") and say nothing the strip doesn't.
+   Clover has no option to omit them; the thumbnail alt text keeps the name. */
+button.clover-viewer-media-item figure figcaption {
+	display: none;
+}
