@@ -78,3 +78,26 @@ button.clover-viewer-media-item figure figcaption {
 		width: 100%;
 	}
 }
+
+/* Same pager row as stock, but at the left edge in line with the thumbnails. */
+.pager-left .clover-viewer-media-wrapper {
+	padding-top: 0;
+}
+
+.pager-left .clover-slider-header {
+	justify-content: flex-start;
+}
+
+.pager-left .clover-slider-header-content {
+	display: none;
+}
+
+.pager-left .clover-slider-header-controls {
+	padding-left: 0;
+}
+
+/* The counter is a pill whose fill matches the page, so its inner padding
+   reads as an indent. */
+.pager-left .clover-slider-counter {
+	padding-left: 0;
+}

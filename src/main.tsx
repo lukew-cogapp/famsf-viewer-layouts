@@ -156,6 +156,7 @@ type Layout = {
 	 */
 	actions?: "caption" | "rights";
 	pagerInline?: boolean;
+	pagerLeft?: boolean;
 };
 
 const layouts: Record<string, Layout> = {
@@ -163,12 +164,14 @@ const layouts: Record<string, Layout> = {
 		name: "Current",
 		note: "Site options today: fixed 31.25rem canvas.",
 		options: siteOptions,
+		pagerLeft: true,
 	},
 	compact: {
 		name: "Current, compact",
 		note: "Current, with licence and download in the caption row so the thumbnail strip comes last.",
 		options: siteOptions,
 		actions: "caption",
+		pagerLeft: true,
 	},
 	tall: {
 		name: "Compact, tall",
@@ -301,6 +304,7 @@ function Clover({
 					? ""
 					: "[&_.caption-row]:px-8 [&_.clover-viewer-media-wrapper]:px-8",
 				layout.pagerInline ? "pager-inline" : "",
+				layout.pagerLeft ? "pager-left" : "",
 			].join(" ")}
 		>
 			{/* Clover's "auto" height needs a positioned parent with a set height. */}
