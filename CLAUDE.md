@@ -42,7 +42,7 @@ Almost everything is in `src/main.tsx`; global and Clover overrides in
   (the most media of any object in the index). Each object's manifest is fetched
   live from `/api/v1/develop/<id>/manifest/v3`.
 - **`layouts`**: each layout is Clover `options` plus a few flags (`height`,
-  `split`, `actions`, `pagerInline`). `siteOptions` mirrors the Craft
+  `split`, `actions`, `pagerInline`, `pagerLeft`). `siteOptions` mirrors the Craft
   ImageViewer's options, plus `showMediaSearch: false`.
 - **Switching** layout or object is a plain link that reloads the page
   (`?layout=…&object=…`). Do not change this to client-side state: Clover does not
@@ -66,8 +66,11 @@ Clover's public `clover-*` classes. Pinned to `@samvera/clover-iiif` 3.17.0.
   variables (`--clover-radius-pill`, `--clover-color-*`,
   `--clover-thumbnail-width`), scoped to the toolbar or media wrapper so they do
   not leak into other Clover UI.
-- **Hidden thumbnail labels** and **pager beside thumbnails** (`.pager-inline`):
-  CSS on public classes, the two real workarounds. Clover's own figcaption rule is
+- **Hidden thumbnail labels**, **pager beside thumbnails** (`.pager-inline`) and
+  **pager at the left** (`.pager-left`, layout flag `pagerLeft`): CSS on public
+  classes, the real workarounds. `.pager-left` also zeroes the counter pill's
+  left padding and the media wrapper's top padding so the pager lines up with
+  the caption. Clover's own figcaption rule is
   `.clover-viewer-media-item figure figcaption`, so overrides need the extra
   `button` element to win.
 - **Rights icons**: rightsstatements.org SVGs in `public/rights/`, used as

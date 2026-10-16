@@ -66,6 +66,7 @@ default comes back. Nothing breaks.
 |---|---|
 | Hide "Image 1", "Image 2" under thumbnails | No option to hide them. The image alt text keeps the label for screen readers. |
 | Pager on the same row as the thumbnails ("Compact, tall" and "Image link" layouts) | Clover always puts the pager above the strip, pushed right. |
+| Pager at the left, level with the caption and thumbnails ("Current" and "Current, compact") | Clover pushes it right, pads the counter pill and adds 20px above the strip. |
 | Page-width padding round the strip and caption | Clover runs the strip edge to edge. |
 
 ### Worth asking Clover for
