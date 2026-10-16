@@ -232,9 +232,18 @@ function ImageActions({
 	return (
 		<div className="flex shrink-0 items-center gap-4">
 			<RightsIcon object={object} className={compact ? "size-8" : "size-12"} />
-			<button type="button" className={button}>
-				{object.download ? "Download" : "Request information"}
-			</button>
+			{object.download ? (
+				<button type="button" className={button}>
+					Download
+				</button>
+			) : (
+				<a
+					href="https://www.famsf.org/art/rights-reproductions"
+					className={button}
+				>
+					Request image
+				</a>
+			)}
 		</div>
 	);
 }
